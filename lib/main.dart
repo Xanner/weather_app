@@ -7,7 +7,12 @@ import './widgets/current_location.dart';
 
 void main() => runApp(RankineApp());
 
-class RankineApp extends StatelessWidget {
+class RankineApp extends StatefulWidget {
+  @override
+  _RankineAppState createState() => _RankineAppState();
+}
+
+class _RankineAppState extends State<RankineApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
