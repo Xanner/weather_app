@@ -13,8 +13,8 @@ class CurrentWeatherScreen extends StatelessWidget {
     final apiKey = 'c5eda51f6f9a2bb874fbc57887b1d862';
     final lang = 'pl';
     final units = 'metric';
-    final lat = 60.0;
-    final lon = 30.9;
+    final lat = 49.6913;
+    final lon = 19.1824;
 
     final url =
         'https://api.openweathermap.org/data/2.5/onecall?lat=$lat&lon=$lon&units=$units&lang=$lang&appid=$apiKey';

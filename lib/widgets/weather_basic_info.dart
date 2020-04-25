@@ -9,7 +9,7 @@ class WeatherBasicInfo extends StatelessWidget {
   Widget build(BuildContext context) {
     print(currentForecast);
     return Container(
-      child: Text('currentForecast.temperature'),
+      child: Text(currentForecast.current.temp.toString()),
     );
   }
 }
