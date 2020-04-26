@@ -64,12 +64,15 @@ class ForecastTabs extends StatelessWidget {
             children = <Widget>[
               Padding(
                 padding: const EdgeInsets.only(top: 16),
-                child: TabBarView(
-                  children: [
-                    CurrentWeatherScreen(snapshot.data.current),
-                    TomorrowWeatherScreen(snapshot.data.hourly),
-                    FutureForecastScreen(snapshot.data.daily)
-                  ],
+                child: Container(
+                  height: 496,
+                  child: TabBarView(
+                    children: [
+                      CurrentWeatherScreen(snapshot.data.current),
+                      TomorrowWeatherScreen(snapshot.data.hourly),
+                      FutureForecastScreen(snapshot.data.daily)
+                    ],
+                  ),
                 ),
               )
             ];
