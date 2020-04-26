@@ -68,7 +68,8 @@ class ForecastTabs extends StatelessWidget {
                   height: 496,
                   child: TabBarView(
                     children: [
-                      CurrentWeatherScreen(snapshot.data.current),
+                      CurrentWeatherScreen(snapshot.data.current,
+                          snapshot.data.daily[0].rain, snapshot.data.hourly),
                       TomorrowWeatherScreen(snapshot.data.hourly),
                       FutureForecastScreen(snapshot.data.daily)
                     ],
