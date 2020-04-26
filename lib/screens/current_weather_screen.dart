@@ -10,6 +10,7 @@ class CurrentWeatherScreen extends StatelessWidget {
   static const tabTitle = 'Dzisiaj';
 
   Future<Forecast> fetchAndSetForecast() async {
+    final urlBase = 'https://api.openweathermap.org/data/2.5/onecall';
     final apiKey = 'c5eda51f6f9a2bb874fbc57887b1d862';
     final lang = 'pl';
     final units = 'metric';
@@ -17,7 +18,7 @@ class CurrentWeatherScreen extends StatelessWidget {
     final lon = 19.1824;
 
     final url =
-        'https://api.openweathermap.org/data/2.5/onecall?lat=$lat&lon=$lon&units=$units&lang=$lang&appid=$apiKey';
+        '$urlBase?lat=$lat&lon=$lon&units=$units&lang=$lang&appid=$apiKey';
     final response = await http.get(url);
 
     if (response.statusCode == 200) {
