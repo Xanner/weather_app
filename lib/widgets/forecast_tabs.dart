@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import '../models/forecast.dart';
 import '../screens/current_weather_screen.dart';
 import '../screens/future_forecast_screen.dart';
@@ -10,17 +11,32 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
-class ForecastTabs extends StatelessWidget {
+class ForecastTabs extends StatefulWidget {
+  @override
+  _ForecastTabsState createState() => _ForecastTabsState();
+}
+
+class _ForecastTabsState extends State<ForecastTabs> {
+  final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
+
+  Position _currentPosition;
+  String _currentAddress;
+
+  initState() {
+    _getCurrentLocation();
+  }
+
   Future<Forecast> fetchAndSetForecast() async {
     final urlBase = 'https://api.openweathermap.org/data/2.5/onecall';
     final apiKey = 'c5eda51f6f9a2bb874fbc57887b1d862';
     final lang = 'pl';
     final units = 'metric';
-    final lat = 49.6913;
-    final lon = 19.1824;
+    final lat = _currentPosition.latitude;
+    final lon = _currentPosition.longitude;
 
     final url =
         '$urlBase?lat=$lat&lon=$lon&units=$units&lang=$lang&appid=$apiKey';
+
     final response = await http.get(url);
 
     if (response.statusCode == 200) {
@@ -30,31 +46,73 @@ class ForecastTabs extends StatelessWidget {
     }
   }
 
+  _getCurrentLocation() {
+    final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
+
+    geolocator
+        .getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
+        .then((Position position) {
+      setState(() {
+        _currentPosition = position;
+      });
+
+      _getAddressFromLatLng();
+    }).catchError((e) {
+      print(e);
+    });
+  }
+
+  _getAddressFromLatLng() async {
+    try {
+      List<Placemark> p = await geolocator.placemarkFromCoordinates(
+          _currentPosition.latitude, _currentPosition.longitude);
+
+      Placemark place = p[0];
+
+      setState(() {
+        _currentAddress =
+            "${place.subLocality}, ${place.subAdministrativeArea}";
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        elevation: 0.0,
-        backgroundColor: Colors.transparent,
-        actions: <Widget>[
-          IconButton(icon: Icon(Icons.search), onPressed: () {}),
-        ],
-        bottom: TabBar(
-          indicatorColor: Colors.white,
-          tabs: [
-            Tab(
-              text: CurrentWeatherScreen.tabTitle,
-            ),
-            Tab(
-              text: TomorrowWeatherScreen.tabTitle,
-            ),
-            Tab(
-              text: FutureForecastScreen.tabTitle,
-            ),
-          ],
+    final mediaQuery = MediaQuery.of(context);
+
+    final PreferredSizeWidget appBar = AppBar(
+      elevation: 0.0,
+      backgroundColor: Colors.transparent,
+      actions: <Widget>[
+        IconButton(
+          icon: Icon(Icons.search),
+          onPressed: () {
+            _getCurrentLocation();
+          },
         ),
-        title: CurrentLocation(),
+      ],
+      bottom: TabBar(
+        indicatorColor: Colors.white,
+        tabs: [
+          Tab(
+            text: CurrentWeatherScreen.tabTitle,
+          ),
+          Tab(
+            text: TomorrowWeatherScreen.tabTitle,
+          ),
+          Tab(
+            text: FutureForecastScreen.tabTitle,
+          ),
+        ],
       ),
+      title: CurrentLocation(_currentAddress),
+      centerTitle: true,
+    );
+
+    return Scaffold(
+      appBar: appBar,
       body: FutureBuilder(
         future: fetchAndSetForecast(),
         builder: (BuildContext context, AsyncSnapshot<Forecast> snapshot) {
@@ -65,12 +123,16 @@ class ForecastTabs extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(top: 16),
                 child: Container(
-                  height: 496,
+                  height: mediaQuery.size.height -
+                      appBar.preferredSize.height -
+                      mediaQuery.padding.top -
+                      16,
                   child: TabBarView(
                     children: [
                       CurrentWeatherScreen(snapshot.data.current,
                           snapshot.data.daily[0].rain, snapshot.data.hourly),
-                      TomorrowWeatherScreen(snapshot.data.hourly),
+                      TomorrowWeatherScreen(snapshot.data.current,
+                          snapshot.data.daily[0].rain, snapshot.data.hourly),
                       FutureForecastScreen(snapshot.data.daily)
                     ],
                   ),
