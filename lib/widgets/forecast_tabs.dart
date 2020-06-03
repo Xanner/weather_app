@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:weather_app/widgets/autocomplete_search.dart';
 import '../models/forecast.dart';
 import '../screens/current_weather_screen.dart';
 import '../screens/future_forecast_screen.dart';
@@ -24,6 +25,7 @@ class _ForecastTabsState extends State<ForecastTabs> {
 
   initState() {
     _getCurrentLocation();
+    super.initState();
   }
 
   Future<Forecast> fetchAndSetForecast() async {
@@ -85,14 +87,6 @@ class _ForecastTabsState extends State<ForecastTabs> {
     final PreferredSizeWidget appBar = AppBar(
       elevation: 0.0,
       backgroundColor: Colors.transparent,
-      actions: <Widget>[
-        IconButton(
-          icon: Icon(Icons.search),
-          onPressed: () {
-            _getCurrentLocation();
-          },
-        ),
-      ],
       bottom: TabBar(
         indicatorColor: Colors.white,
         tabs: [
@@ -107,7 +101,7 @@ class _ForecastTabsState extends State<ForecastTabs> {
           ),
         ],
       ),
-      title: CurrentLocation(_currentAddress),
+      title: AutoComplete(),
       centerTitle: true,
     );
 
@@ -131,7 +125,7 @@ class _ForecastTabsState extends State<ForecastTabs> {
                     children: [
                       CurrentWeatherScreen(snapshot.data.current,
                           snapshot.data.daily[0].rain, snapshot.data.hourly),
-                      TomorrowWeatherScreen(snapshot.data.current,
+                      TomorrowWeatherScreen(snapshot.data.daily[1],
                           snapshot.data.daily[0].rain, snapshot.data.hourly),
                       FutureForecastScreen(snapshot.data.daily)
                     ],

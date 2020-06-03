@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:weather_app/models/daily.dart';
 import 'package:weather_app/widgets/hourly_forecast_list.dart';
 import '../models/hourly.dart';
 import '../models/current.dart';
@@ -6,7 +7,7 @@ import 'dart:math';
 
 class TomorrowWeatherScreen extends StatelessWidget {
   static const tabTitle = 'Jutro';
-  final Current currentForecast;
+  final Daily currentForecast;
   final double currentDailyRain;
   final List<Hourly> currentHourlyForecast;
 
@@ -65,7 +66,7 @@ class TomorrowWeatherScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Text(
-                  currentForecast.temp.round().toString() + "°C",
+                  currentForecast.temp.day.round().toString() + "°C",
                   style: TextStyle(fontSize: 70.0),
                 ),
                 Image.network(
