@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:weather_app/widgets/autocomplete_search.dart';
 import '../models/forecast.dart';
 import '../screens/current_weather_screen.dart';
 import '../screens/future_forecast_screen.dart';
 import '../screens/tomorrow_weather_screen.dart';
-import './current_location.dart';
 
 import 'dart:async';
 import 'dart:convert';
@@ -13,20 +11,52 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class ForecastTabs extends StatefulWidget {
+  const ForecastTabs({
+    Key key,
+
+    /// If set, enable the FusedLocationProvider on Android
+    @required this.androidFusedLocation,
+  }) : super(key: key);
+
+  final bool androidFusedLocation;
   @override
   _ForecastTabsState createState() => _ForecastTabsState();
 }
 
 class _ForecastTabsState extends State<ForecastTabs> {
-  final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
-
   Position _currentPosition;
-  String _currentAddress;
+  //String _currentAddress;
 
   @override
   void initState() {
-    _getCurrentLocation();
     super.initState();
+
+    _initCurrentLocation();
+  }
+
+  @override
+  void didUpdateWidget(Widget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    setState(() {
+      _currentPosition = null;
+    });
+
+    _initCurrentLocation();
+  }
+
+  _initCurrentLocation() {
+    Geolocator()
+      ..forceAndroidLocationManager = !widget.androidFusedLocation
+      ..getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.best,
+      ).then((position) {
+        if (mounted) {
+          setState(() => _currentPosition = position);
+        }
+      }).catchError((e) {
+        print(e);
+      });
   }
 
   Future<Forecast> fetchAndSetForecast() async {
@@ -34,8 +64,8 @@ class _ForecastTabsState extends State<ForecastTabs> {
     final apiKey = 'c5eda51f6f9a2bb874fbc57887b1d862';
     final lang = 'pl';
     final units = 'metric';
-    final lat = _currentPosition?.latitude;
-    final lon = _currentPosition?.longitude;
+    final lat = _currentPosition.latitude;
+    final lon = _currentPosition.longitude;
 
     final url =
         '$urlBase?lat=$lat&lon=$lon&units=$units&lang=$lang&appid=$apiKey';
@@ -46,38 +76,6 @@ class _ForecastTabsState extends State<ForecastTabs> {
       return Forecast.fromJson(json.decode(response.body));
     } else {
       throw Exception('Nie udało się pobrać danych.');
-    }
-  }
-
-  _getCurrentLocation() {
-    final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
-
-    geolocator
-        .getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
-        .then((Position position) {
-      setState(() {
-        _currentPosition = position;
-      });
-
-      _getAddressFromLatLng();
-    }).catchError((e) {
-      print(e);
-    });
-  }
-
-  _getAddressFromLatLng() async {
-    try {
-      List<Placemark> p = await geolocator.placemarkFromCoordinates(
-          _currentPosition.latitude, _currentPosition.longitude);
-
-      Placemark place = p[0];
-
-      setState(() {
-        _currentAddress =
-            "${place.subLocality}, ${place.subAdministrativeArea}";
-      });
-    } catch (e) {
-      print(e);
     }
   }
 
@@ -102,13 +100,9 @@ class _ForecastTabsState extends State<ForecastTabs> {
           ),
         ],
       ),
-      title: AutoComplete(),
+      title: Text('MIASTO'),
       centerTitle: true,
-      leading: IconButton(
-          icon: Icon(Icons.ac_unit),
-          onPressed: () {
-            _getCurrentLocation();
-          }),
+      leading: IconButton(icon: Icon(Icons.my_location), onPressed: () {}),
     );
 
     List<Widget> _buildDataView(AsyncSnapshot<dynamic> snapshot) {
@@ -156,6 +150,7 @@ class _ForecastTabsState extends State<ForecastTabs> {
             children = _buildLoader();
           }
           if (snapshot.hasError) {
+            print('jakis error');
             children = _buildLoader();
           }
           if (snapshot.hasData) {
@@ -170,10 +165,24 @@ class _ForecastTabsState extends State<ForecastTabs> {
           );
         });
 
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      appBar: appBar,
-      body: builder,
-    );
+    return FutureBuilder<GeolocationStatus>(
+        future: Geolocator().checkGeolocationPermissionStatus(),
+        builder:
+            (BuildContext context, AsyncSnapshot<GeolocationStatus> snapshot) {
+          if (!snapshot.hasData) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (snapshot.data == GeolocationStatus.denied) {
+            return const Text(
+                'Access to location denied, Allow access to the location services for this App using the device settings.');
+          }
+
+          return Scaffold(
+            resizeToAvoidBottomInset: false,
+            appBar: appBar,
+            body: builder,
+          );
+        });
   }
 }

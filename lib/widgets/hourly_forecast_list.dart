@@ -11,7 +11,7 @@ class HourlyForecastList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.only(top: 20),
-      height: 110.0,
+      height: 120.0,
       child: ListView.builder(
         itemCount: hourlyForecast.length - 24,
         scrollDirection: Axis.horizontal,
@@ -21,6 +21,8 @@ class HourlyForecastList extends StatelessWidget {
                   hourlyForecast[index].dt * 1000)
               .hour;
           return Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Text(
                 index == 0 ? "Teraz" : "$parsedHour:00",

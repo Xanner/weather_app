@@ -14,7 +14,7 @@ class CurrentWeatherScreen extends StatelessWidget {
   CurrentWeatherScreen(
       this.currentForecast, this.currentDailyRain, this.currentHourlyForecast);
 
-  Widget WeatherCard(AssetImage weatherIcon, Text weatherText) {
+  Widget weatherCard(AssetImage weatherIcon, Text weatherText) {
     return Expanded(
       child: Container(
         padding: EdgeInsets.only(top: 15),
@@ -51,8 +51,8 @@ class CurrentWeatherScreen extends StatelessWidget {
     final currentWind = currentForecast.windSpeed.round();
     final currentHumidity = currentForecast.humidity;
     final imageUrl = currentForecast.weather[0].icon;
-    var date =
-        new DateTime.fromMillisecondsSinceEpoch(currentForecast.dt * 1000);
+    // var date =
+    //     new DateTime.fromMillisecondsSinceEpoch(currentForecast.dt * 1000);
 
     return Column(
       children: <Widget>[
@@ -120,15 +120,15 @@ class CurrentWeatherScreen extends StatelessWidget {
                     children: <Widget>[
                       Row(
                         children: <Widget>[
-                          WeatherCard(
+                          weatherCard(
                             AssetImage('assets/icons/wind.png'),
                             Text('Wiatr $currentWind m/s'),
                           ),
-                          WeatherCard(
+                          weatherCard(
                             AssetImage('assets/icons/rainy.png'),
                             Text('Opady $currentDailyRain mm'),
                           ),
-                          WeatherCard(
+                          weatherCard(
                             AssetImage('assets/icons/humidity.png'),
                             Text('Wilgotność $currentHumidity%'),
                           ),

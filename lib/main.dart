@@ -30,7 +30,7 @@ class _RankineAppState extends State<RankineApp> {
               ],
             ),
           ),
-          child: ForecastTabs(),
+          child: ForecastTabs(androidFusedLocation: true),
         ),
       ),
     );
