@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:weather_app/widgets/hourly_forecast_list.dart';
 import '../models/hourly.dart';
@@ -68,8 +69,11 @@ class CurrentWeatherScreen extends StatelessWidget {
                   currentForecast.temp.round().toString() + "°C",
                   style: TextStyle(fontSize: 70.0),
                 ),
-                Image.network(
-                  'http://openweathermap.org/img/wn/$imageUrl.png',
+                CachedNetworkImage(
+                  imageUrl: 'http://openweathermap.org/img/wn/$imageUrl.png',
+                  progressIndicatorBuilder: (context, url, downloadProgress) =>
+                      CircularProgressIndicator(),
+                  errorWidget: (context, url, error) => Icon(Icons.error),
                 ),
                 Text(
                   currentForecast.weather[0].description,

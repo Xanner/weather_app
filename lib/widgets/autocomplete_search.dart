@@ -36,32 +36,19 @@ class _AutoCompleteState extends State<AutoComplete> {
             children: <Widget>[
               searchTextField = AutoCompleteTextField<City>(
                 style: new TextStyle(color: Colors.white, fontSize: 22.0),
-                onFocusChanged: (isFocused) {
-                  setState(() => _isFocused = isFocused);
-                },
                 decoration: new InputDecoration(
                   fillColor: Colors.transparent,
                   border: InputBorder.none,
                   focusedBorder: UnderlineInputBorder(
                     borderSide: BorderSide(color: Colors.white54),
                   ),
-                  suffixIcon: Row(
-                    mainAxisAlignment:
-                        MainAxisAlignment.spaceBetween, // added line
-                    mainAxisSize: MainAxisSize.min, // added line
-                    children: <Widget>[
-                      if (_isFocused)
-                        IconButton(
-                          icon: Icon(Icons.my_location),
-                          onPressed: () {
-                            print('pobierz lokalizacje');
-                          },
-                        ),
-                      IconButton(
-                        icon: Icon(Icons.search),
-                        onPressed: () {},
-                      ),
-                    ],
+                  icon: IconButton(
+                    icon: Icon(Icons.my_location),
+                    onPressed: () {},
+                  ),
+                  suffixIcon: IconButton(
+                    icon: Icon(Icons.search),
+                    onPressed: () {},
                   ),
                   filled: true,
                   hintText: 'Twoja lokalizacja',

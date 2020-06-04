@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import '../models/hourly.dart';
 
@@ -25,8 +26,11 @@ class HourlyForecastList extends StatelessWidget {
                 index == 0 ? "Teraz" : "$parsedHour:00",
                 style: TextStyle(color: Colors.black.withOpacity(0.5)),
               ),
-              Image.network(
-                'http://openweathermap.org/img/wn/$imageUrl.png',
+              CachedNetworkImage(
+                imageUrl: 'http://openweathermap.org/img/wn/$imageUrl.png',
+                progressIndicatorBuilder: (context, url, downloadProgress) =>
+                    CircularProgressIndicator(),
+                errorWidget: (context, url, error) => Icon(Icons.error),
               ),
               Text(
                 hourlyForecast[index].temp.round().toString() + "°C ",

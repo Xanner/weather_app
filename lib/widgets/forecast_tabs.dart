@@ -23,7 +23,8 @@ class _ForecastTabsState extends State<ForecastTabs> {
   Position _currentPosition;
   String _currentAddress;
 
-  initState() {
+  @override
+  void initState() {
     _getCurrentLocation();
     super.initState();
   }
@@ -33,8 +34,8 @@ class _ForecastTabsState extends State<ForecastTabs> {
     final apiKey = 'c5eda51f6f9a2bb874fbc57887b1d862';
     final lang = 'pl';
     final units = 'metric';
-    final lat = _currentPosition.latitude;
-    final lon = _currentPosition.longitude;
+    final lat = _currentPosition?.latitude;
+    final lon = _currentPosition?.longitude;
 
     final url =
         '$urlBase?lat=$lat&lon=$lon&units=$units&lang=$lang&appid=$apiKey';
@@ -103,60 +104,62 @@ class _ForecastTabsState extends State<ForecastTabs> {
       ),
       title: AutoComplete(),
       centerTitle: true,
+      leading: IconButton(
+          icon: Icon(Icons.ac_unit),
+          onPressed: () {
+            _getCurrentLocation();
+          }),
     );
 
-    return Scaffold(
-      appBar: appBar,
-      body: FutureBuilder(
-        future: fetchAndSetForecast(),
-        builder: (BuildContext context, AsyncSnapshot<Forecast> snapshot) {
-          List<Widget> children;
+    List<Widget> _buildDataView(AsyncSnapshot<dynamic> snapshot) {
+      return <Widget>[
+        Padding(
+          padding: const EdgeInsets.only(top: 16),
+          child: Container(
+            height: mediaQuery.size.height -
+                appBar.preferredSize.height -
+                mediaQuery.padding.top -
+                16,
+            child: TabBarView(
+              children: [
+                CurrentWeatherScreen(snapshot.data.current,
+                    snapshot.data.daily[0].rain, snapshot.data.hourly),
+                TomorrowWeatherScreen(snapshot.data.daily[1],
+                    snapshot.data.daily[0].rain, snapshot.data.hourly),
+                FutureForecastScreen(snapshot.data.daily)
+              ],
+            ),
+          ),
+        )
+      ];
+    }
 
+    List<Widget> _buildLoader() {
+      return <Widget>[
+        SizedBox(
+          child: CircularProgressIndicator(),
+          width: 60,
+          height: 60,
+        ),
+        const Padding(
+          padding: EdgeInsets.only(top: 16),
+          child: Text('Pobieranie danych...'),
+        )
+      ];
+    }
+
+    final builder = FutureBuilder(
+        future: fetchAndSetForecast(),
+        builder: (context, snapshot) {
+          List<Widget> children;
+          if (snapshot.connectionState != ConnectionState.done) {
+            children = _buildLoader();
+          }
+          if (snapshot.hasError) {
+            children = _buildLoader();
+          }
           if (snapshot.hasData) {
-            children = <Widget>[
-              Padding(
-                padding: const EdgeInsets.only(top: 16),
-                child: Container(
-                  height: mediaQuery.size.height -
-                      appBar.preferredSize.height -
-                      mediaQuery.padding.top -
-                      16,
-                  child: TabBarView(
-                    children: [
-                      CurrentWeatherScreen(snapshot.data.current,
-                          snapshot.data.daily[0].rain, snapshot.data.hourly),
-                      TomorrowWeatherScreen(snapshot.data.daily[1],
-                          snapshot.data.daily[0].rain, snapshot.data.hourly),
-                      FutureForecastScreen(snapshot.data.daily)
-                    ],
-                  ),
-                ),
-              )
-            ];
-          } else if (snapshot.hasError) {
-            children = <Widget>[
-              Icon(
-                Icons.error_outline,
-                color: Colors.red,
-                size: 60,
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 16),
-                child: Text('Error: ${snapshot.error}'),
-              )
-            ];
-          } else {
-            children = <Widget>[
-              SizedBox(
-                child: CircularProgressIndicator(),
-                width: 60,
-                height: 60,
-              ),
-              const Padding(
-                padding: EdgeInsets.only(top: 16),
-                child: Text('Pobieranie danych...'),
-              )
-            ];
+            children = _buildDataView(snapshot);
           }
           return Center(
             child: Column(
@@ -165,8 +168,12 @@ class _ForecastTabsState extends State<ForecastTabs> {
               children: children,
             ),
           );
-        },
-      ),
+        });
+
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      appBar: appBar,
+      body: builder,
     );
   }
 }
