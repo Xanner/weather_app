@@ -13,7 +13,7 @@
     
     <application
         android:name="io.flutter.app.FlutterApplication"
-        android:label="weather_app"
+        android:label="Rankine"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

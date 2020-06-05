@@ -9,9 +9,11 @@ class HourlyForecastList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context);
+
     return Container(
-      padding: EdgeInsets.only(top: 20),
-      height: 120.0,
+      padding: EdgeInsets.only(top: mediaQuery.size.height <= 640 ? 0 : 20),
+      height: mediaQuery.size.height <= 640 ? 104 : 120,
       child: ListView.builder(
         itemCount: hourlyForecast.length - 24,
         scrollDirection: Axis.horizontal,

@@ -1,3 +1,4 @@
+import 'package:android_intent/android_intent.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import '../models/forecast.dart';
@@ -79,6 +80,13 @@ class _ForecastTabsState extends State<ForecastTabs> {
     }
   }
 
+  void openLocationSetting() async {
+    final AndroidIntent intent = new AndroidIntent(
+      action: 'android.settings.LOCATION_SOURCE_SETTINGS',
+    );
+    await intent.launch();
+  }
+
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
@@ -102,7 +110,12 @@ class _ForecastTabsState extends State<ForecastTabs> {
       ),
       title: Text('MIASTO'),
       centerTitle: true,
-      leading: IconButton(icon: Icon(Icons.my_location), onPressed: () {}),
+      leading: IconButton(
+          icon: Icon(Icons.my_location),
+          onPressed: () {
+            openLocationSetting();
+            _initCurrentLocation();
+          }),
     );
 
     List<Widget> _buildDataView(AsyncSnapshot<dynamic> snapshot) {
@@ -142,28 +155,40 @@ class _ForecastTabsState extends State<ForecastTabs> {
       ];
     }
 
-    final builder = FutureBuilder(
-        future: fetchAndSetForecast(),
-        builder: (context, snapshot) {
-          List<Widget> children;
-          if (snapshot.connectionState != ConnectionState.done) {
-            children = _buildLoader();
-          }
-          if (snapshot.hasError) {
-            print('jakis error');
-            children = _buildLoader();
-          }
-          if (snapshot.hasData) {
-            children = _buildDataView(snapshot);
-          }
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: children,
-            ),
-          );
-        });
+    Widget WidgetBuilder(GeolocationStatus status) {
+      if (status == GeolocationStatus.denied) {
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Text('Wybierz lokalizację aby wyświetlić pogodę'),
+          ],
+        );
+      }
+
+      return FutureBuilder(
+          future: fetchAndSetForecast(),
+          builder: (context, snapshot) {
+            List<Widget> children;
+            if (snapshot.connectionState != ConnectionState.done) {
+              children = _buildLoader();
+            }
+            if (snapshot.hasError) {
+              print('jakis error');
+              children = _buildLoader();
+            }
+            if (snapshot.hasData) {
+              children = _buildDataView(snapshot);
+            }
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: children,
+              ),
+            );
+          });
+    }
 
     return FutureBuilder<GeolocationStatus>(
         future: Geolocator().checkGeolocationPermissionStatus(),
@@ -173,15 +198,10 @@ class _ForecastTabsState extends State<ForecastTabs> {
             return const Center(child: CircularProgressIndicator());
           }
 
-          if (snapshot.data == GeolocationStatus.denied) {
-            return const Text(
-                'Access to location denied, Allow access to the location services for this App using the device settings.');
-          }
-
           return Scaffold(
             resizeToAvoidBottomInset: false,
             appBar: appBar,
-            body: builder,
+            body: WidgetBuilder(snapshot.data),
           );
         });
   }

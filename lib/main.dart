@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:splashscreen/splashscreen.dart';
 import './widgets/forecast_tabs.dart';
 
 void main() => runApp(RankineApp());
@@ -17,11 +18,27 @@ class _RankineAppState extends State<RankineApp> {
         scaffoldBackgroundColor: Colors.transparent,
         brightness: Brightness.dark,
       ),
-      home: DefaultTabController(
-        length: 3,
-        child: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
+      home: Stack(
+        children: <Widget>[
+          SplashScreen(
+            seconds: 4,
+            navigateAfterSeconds: DefaultTabController(
+              length: 3,
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      const Color.fromARGB(255, 255, 186, 163),
+                      const Color.fromARGB(255, 238, 204, 168),
+                    ],
+                  ),
+                ),
+                child: ForecastTabs(androidFusedLocation: true),
+              ),
+            ),
+            gradientBackground: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [
@@ -29,9 +46,17 @@ class _RankineAppState extends State<RankineApp> {
                 const Color.fromARGB(255, 238, 204, 168),
               ],
             ),
+            loaderColor: Colors.transparent,
           ),
-          child: ForecastTabs(androidFusedLocation: true),
-        ),
+          Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage("assets/icons/splash_logo.png"),
+                fit: BoxFit.fitWidth,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
