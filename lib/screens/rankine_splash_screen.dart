@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:splashscreen/splashscreen.dart';
-import 'package:weather_app/widgets/forecast_tabs.dart';
+import 'package:weather_app/widgets/forecast_tabs_widget.dart';
 
 class RankineSplashScreen extends StatelessWidget {
   const RankineSplashScreen({
@@ -24,7 +24,7 @@ class RankineSplashScreen extends StatelessWidget {
               ],
             ),
           ),
-          child: ForecastTabs(androidFusedLocation: true),
+          child: ForecastTabsWidget(androidFusedLocation: true),
         ),
       ),
       gradientBackground: LinearGradient(

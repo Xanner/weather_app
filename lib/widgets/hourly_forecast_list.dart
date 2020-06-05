@@ -1,6 +1,6 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import '../models/hourly.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:weather_app/models/hourly.dart';
 
 class HourlyForecastList extends StatelessWidget {
   final List<Hourly> hourlyForecast;
@@ -10,10 +10,12 @@ class HourlyForecastList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
+    const mediumDeviceHeight = 640.0;
 
     return Container(
-      padding: EdgeInsets.only(top: mediaQuery.size.height <= 640 ? 0 : 20),
-      height: mediaQuery.size.height <= 640 ? 104 : 120,
+      padding: EdgeInsets.only(
+          top: mediaQuery.size.height <= mediumDeviceHeight ? 0 : 20),
+      height: mediaQuery.size.height <= mediumDeviceHeight ? 104 : 120,
       child: ListView.builder(
         itemCount: hourlyForecast.length - 24,
         scrollDirection: Axis.horizontal,
