@@ -13,8 +13,6 @@ class HourlyForecastList extends StatelessWidget {
     final mediaQuery = MediaQuery.of(context);
     const mediumDeviceHeight = 640.0;
 
-    var now = new DateTime.now();
-
     return Container(
       padding: EdgeInsets.only(
           top: mediaQuery.size.height <= mediumDeviceHeight ? 0 : 20),

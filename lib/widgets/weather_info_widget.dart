@@ -1,9 +1,10 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:weather_app/screens/weather_details_screen.dart';
-import 'package:weather_app/widgets/hourly_forecast_list.dart';
+import 'package:weather_app/models/current.dart';
 import 'package:weather_app/models/hourly.dart';
+import 'package:weather_app/screens/details_weather_screen.dart';
+import 'package:weather_app/widgets/hourly_forecast_list.dart';
 import 'package:weather_app/widgets/weather_card_widget.dart';
 
 class WeatherInfoWidget extends StatelessWidget {
@@ -17,6 +18,7 @@ class WeatherInfoWidget extends StatelessWidget {
     @required this.humidity,
     @required this.hourlyForecast,
     @required this.isCurrent,
+    this.detailsWeather,
   }) : super(key: key);
 
   final String temperature;
@@ -27,6 +29,7 @@ class WeatherInfoWidget extends StatelessWidget {
   final int humidity;
   final List<Hourly> hourlyForecast;
   final bool isCurrent;
+  final Current detailsWeather;
 
   @override
   Widget build(BuildContext context) {
@@ -91,7 +94,9 @@ class WeatherInfoWidget extends StatelessWidget {
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) =>
-                                              WeatherDetailsScreen()),
+                                              DetailsWeatherScreen(
+                                                detailsWeather,
+                                              )),
                                     );
                                   },
                                 )),

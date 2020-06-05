@@ -29,12 +29,12 @@ class ForecastWidget extends StatelessWidget {
       var amountHours = 24 - now.hour + 7;
 
       List<Hourly> currentHourlyWeather =
-          snapshot.data?.hourly.take(amountHours).toList();
+          snapshot.data.hourly.take(amountHours).toList();
 
       Daily tomorrowWeather = snapshot.data?.daily[1];
       double tomorrowRainAmount = snapshot.data?.daily[1].rain;
       List<Hourly> tomorrowHourlyWeather =
-          snapshot.data?.hourly.skip(amountHours - 1).take(25).toList();
+          snapshot.data.hourly.skip(amountHours - 1).take(25).toList();
 
       List<Daily> dailyWeather = snapshot.data?.daily;
 

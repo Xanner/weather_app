@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:weather_app/models/current.dart';
 import 'package:weather_app/models/daily.dart';
 import 'package:weather_app/models/hourly.dart';
 import 'package:weather_app/widgets/weather_info_widget.dart';
