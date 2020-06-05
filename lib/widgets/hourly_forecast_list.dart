@@ -4,20 +4,23 @@ import 'package:weather_app/models/hourly.dart';
 
 class HourlyForecastList extends StatelessWidget {
   final List<Hourly> hourlyForecast;
+  final bool isCurrent;
 
-  HourlyForecastList(this.hourlyForecast);
+  HourlyForecastList(this.hourlyForecast, this.isCurrent);
 
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
     const mediumDeviceHeight = 640.0;
 
+    var now = new DateTime.now();
+
     return Container(
       padding: EdgeInsets.only(
           top: mediaQuery.size.height <= mediumDeviceHeight ? 0 : 20),
       height: mediaQuery.size.height <= mediumDeviceHeight ? 104 : 120,
       child: ListView.builder(
-        itemCount: hourlyForecast.length - 24,
+        itemCount: hourlyForecast.length,
         scrollDirection: Axis.horizontal,
         itemBuilder: (BuildContext context, int index) {
           final imageUrl = hourlyForecast[index].weather[0].icon;
@@ -29,7 +32,7 @@ class HourlyForecastList extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Text(
-                index == 0 ? "Teraz" : "$parsedHour:00",
+                (index == 0 && isCurrent) ? "Teraz" : "$parsedHour:00",
                 style: TextStyle(color: Colors.black.withOpacity(0.5)),
               ),
               CachedNetworkImage(

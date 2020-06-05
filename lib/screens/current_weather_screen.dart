@@ -28,6 +28,7 @@ class CurrentWeatherScreen extends StatelessWidget {
       dailyRainAmount: currentDailyRain,
       humidity: currentHumidity,
       hourlyForecast: currentHourlyForecast,
+      isCurrent: true,
     );
   }
 }

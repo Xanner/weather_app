@@ -1,8 +1,8 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:weather_app/screens/weather_details_screen.dart';
 import 'package:weather_app/widgets/hourly_forecast_list.dart';
-import 'package:weather_app/models/current.dart';
 import 'package:weather_app/models/hourly.dart';
 import 'package:weather_app/widgets/weather_card_widget.dart';
 
@@ -16,6 +16,7 @@ class WeatherInfoWidget extends StatelessWidget {
     @required this.dailyRainAmount,
     @required this.humidity,
     @required this.hourlyForecast,
+    @required this.isCurrent,
   }) : super(key: key);
 
   final String temperature;
@@ -25,6 +26,7 @@ class WeatherInfoWidget extends StatelessWidget {
   final double dailyRainAmount;
   final int humidity;
   final List<Hourly> hourlyForecast;
+  final bool isCurrent;
 
   @override
   Widget build(BuildContext context) {
@@ -74,16 +76,27 @@ class WeatherInfoWidget extends StatelessWidget {
                   mainAxisSize: MainAxisSize.max,
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
-                    Center(
-                      child: Transform.rotate(
-                        angle: -90 * pi / 180,
-                        child: Icon(
-                          Icons.arrow_back_ios,
-                          color: Color.fromARGB(255, 241, 156, 130),
-                          size: 32,
-                        ),
-                      ),
-                    ),
+                    isCurrent
+                        ? Center(
+                            child: Transform.rotate(
+                                angle: -90 * pi / 180,
+                                child: IconButton(
+                                  icon: Icon(
+                                    Icons.arrow_back_ios,
+                                    color: Color.fromARGB(255, 241, 156, 130),
+                                    size: 32,
+                                  ),
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              WeatherDetailsScreen()),
+                                    );
+                                  },
+                                )),
+                          )
+                        : Center(),
                   ],
                 ),
               ),
@@ -109,7 +122,7 @@ class WeatherInfoWidget extends StatelessWidget {
                           ),
                         ],
                       ),
-                      HourlyForecastList(hourlyForecast),
+                      HourlyForecastList(hourlyForecast, isCurrent),
                     ],
                   ),
                 ),

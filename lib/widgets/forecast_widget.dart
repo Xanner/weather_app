@@ -24,22 +24,27 @@ class ForecastWidget extends StatelessWidget {
       final mediaQuery = MediaQuery.of(context);
       Current currentWeather = snapshot.data?.current;
       double currentRainAmount = snapshot.data?.daily[0].rain;
+
+      var now = new DateTime.now();
+      var amountHours = 24 - now.hour + 7;
+
       List<Hourly> currentHourlyWeather =
-          snapshot.data?.hourly; // od teraz do 6 rano TODO
+          snapshot.data?.hourly.take(amountHours).toList();
 
       Daily tomorrowWeather = snapshot.data?.daily[1];
       double tomorrowRainAmount = snapshot.data?.daily[1].rain;
       List<Hourly> tomorrowHourlyWeather =
-          snapshot.data?.hourly; //od 6 rano do 6 rano TODO
+          snapshot.data?.hourly.skip(amountHours - 1).take(25).toList();
 
       List<Daily> dailyWeather = snapshot.data?.daily;
 
+      var amountDiff = mediaQuery.size.height > 640 ? 32 : 24;
       return <Widget>[
         Container(
           height: mediaQuery.size.height -
               appBarSize.preferredSize.height -
               mediaQuery.padding.top -
-              32,
+              amountDiff,
           child: TabBarView(
             children: [
               CurrentWeatherScreen(

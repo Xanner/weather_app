@@ -32,6 +32,7 @@ class TomorrowWeatherScreen extends StatelessWidget {
       dailyRainAmount: tomorrowRainAmount,
       humidity: tomorrowHumidity,
       hourlyForecast: tomorrowHourlyWeather,
+      isCurrent: false,
     );
   }
 }
