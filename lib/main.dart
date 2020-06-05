@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:splashscreen/splashscreen.dart';
 import './widgets/forecast_tabs.dart';
 
@@ -12,6 +13,10 @@ class RankineApp extends StatefulWidget {
 class _RankineAppState extends State<RankineApp> {
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
     return MaterialApp(
       title: 'Rankine',
       theme: ThemeData(
