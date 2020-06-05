@@ -81,7 +81,7 @@ class ForecastWidget extends StatelessWidget {
           padding: EdgeInsets.only(top: 16),
           child: Center(
             child: Text(
-              'Coś poszło nie tak, upewnij się, że masz włączony internet.', //TODO wyglada jak gowno
+              'Coś poszło nie tak, upewnij się, że masz włączony internet.', //TODO wyglada jak ...
             ),
           ),
         )

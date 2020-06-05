@@ -33,7 +33,8 @@ class GeolocationWidget extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
                       Text(
-                          'Wybierz lokalizację aby wyświetlić pogodę'), //TODO sprawdzic jak to wyglada
+                        'Wybierz lokalizację aby wyświetlić pogodę',
+                      ), //TODO sprawdzic jak to wyglada
                     ],
                   )
                 : ForecastWidget(forecast: forecast, appBarSize: appBar),

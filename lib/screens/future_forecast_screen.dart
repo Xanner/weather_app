@@ -10,7 +10,7 @@ class FutureForecastScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Text('tu lista'),
+      child: Text('tu lista'), //TODO do zaimplementowania Lista Daily
     );
   }
 }
