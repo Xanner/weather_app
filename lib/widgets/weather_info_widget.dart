@@ -100,7 +100,8 @@ class WeatherInfoWidget extends StatelessWidget {
                           ),
                           WeatherCardWidget(
                             weatherIconUrl: 'assets/icons/rainy.png',
-                            weatherText: 'Opady $dailyRainAmount mm',
+                            weatherText:
+                                'Opady ${dailyRainAmount != null ? dailyRainAmount : 0.00} mm',
                           ),
                           WeatherCardWidget(
                             weatherIconUrl: 'assets/icons/humidity.png',

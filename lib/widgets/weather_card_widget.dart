@@ -20,7 +20,13 @@ class WeatherCardWidget extends StatelessWidget {
             Image(image: AssetImage(weatherIconUrl)),
             Padding(
               padding: const EdgeInsets.only(top: 8.0),
-              child: Text(weatherText),
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: new Text(
+                  weatherText,
+                  maxLines: 1,
+                ),
+              ),
             ),
           ],
         ),

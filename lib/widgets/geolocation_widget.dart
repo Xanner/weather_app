@@ -14,6 +14,16 @@ class GeolocationWidget extends StatelessWidget {
   final PreferredSizeWidget appBar;
   final Future<Forecast> forecast;
 
+  Widget keyboardDismisser({BuildContext context, Widget child}) {
+    final gesture = GestureDetector(
+      onTap: () {
+        FocusScope.of(context).requestFocus(new FocusNode());
+      },
+      child: child,
+    );
+    return gesture;
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<GeolocationStatus>(
@@ -24,21 +34,23 @@ class GeolocationWidget extends StatelessWidget {
             return const Center(child: CircularProgressIndicator());
           }
 
-          return Scaffold(
-            resizeToAvoidBottomInset: false,
-            appBar: appBar,
-            body: snapshot.data == GeolocationStatus.denied
-                ? Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      Text(
-                        'Wybierz lokalizację aby wyświetlić pogodę',
-                      ), //TODO sprawdzic jak to wyglada
-                    ],
-                  )
-                : ForecastWidget(forecast: forecast, appBarSize: appBar),
-          );
+          return this.keyboardDismisser(
+              context: context,
+              child: Scaffold(
+                resizeToAvoidBottomInset: false,
+                appBar: appBar,
+                body: snapshot.data == GeolocationStatus.denied
+                    ? Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          Text(
+                            'Wybierz lokalizację aby wyświetlić pogodę',
+                          ),
+                        ],
+                      )
+                    : ForecastWidget(forecast: forecast, appBarSize: appBar),
+              ));
         });
   }
 }

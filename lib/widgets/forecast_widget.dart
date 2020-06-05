@@ -39,7 +39,7 @@ class ForecastWidget extends StatelessWidget {
           height: mediaQuery.size.height -
               appBarSize.preferredSize.height -
               mediaQuery.padding.top -
-              24,
+              32,
           child: TabBarView(
             children: [
               CurrentWeatherScreen(

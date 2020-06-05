@@ -38,7 +38,7 @@ class _ForecastTabsWidgetState extends State<ForecastTabsWidget> {
     _openLocationSetting();
     Position position = await Geolocator()
         .getCurrentPosition(desiredAccuracy: LocationAccuracy.best);
-
+    await _findPlaceFromCoords();
     setState(() {
       _currentPosition = position;
       forecast = _fetchAndSetForecast();
@@ -134,6 +134,27 @@ class _ForecastTabsWidgetState extends State<ForecastTabsWidget> {
     }
   }
 
+  Future<void> _findPlaceFromCoords() async {
+    final List<Placemark> placemarks =
+        await Future(() => _geolocator.placemarkFromPosition(_currentPosition))
+            .catchError((onError) {});
+
+    if (placemarks != null && placemarks.isNotEmpty) {
+      final Placemark pos = placemarks[0];
+      _setPosName(pos);
+    }
+  }
+
+  void _setPosName(Placemark pos) {
+    _addressTextController.text = pos.thoroughfare +
+        ' ' +
+        pos.name +
+        ', ' +
+        (pos.postalCode.length > 3 ? pos.postalCode : '') +
+        ' ' +
+        pos.country;
+  }
+
   Future<void> _findPlace() async {
     final List<Placemark> placemarks = await Future(
             () => _geolocator.placemarkFromAddress(_addressTextController.text))
@@ -146,11 +167,7 @@ class _ForecastTabsWidgetState extends State<ForecastTabsWidget> {
 
     if (placemarks != null && placemarks.isNotEmpty) {
       final Placemark pos = placemarks[0];
-      _addressTextController.text = pos.name +
-          ', ' +
-          (pos.postalCode.length > 3 ? pos.postalCode : '') +
-          ' ' +
-          pos.country;
+      _setPosName(pos);
       setState(() {
         _currentPosition = new Position(
           latitude: pos.position.latitude,
