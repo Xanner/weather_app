@@ -34,6 +34,7 @@ flutter:
     - assets/icons/rainy.png
     - assets/icons/humidity.png
     - assets/icons/splash_logo.png
+    - assets/whoops.png
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
   # For details regarding adding assets from package dependencies, see

@@ -24,7 +24,7 @@ class RankineSplashScreen extends StatelessWidget {
               ],
             ),
           ),
-          child: ForecastTabsWidget(androidFusedLocation: true),
+          child: ForecastTabsWidget(),
         ),
       ),
       gradientBackground: LinearGradient(

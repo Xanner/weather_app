@@ -12,12 +12,6 @@ import 'package:weather_app/screens/tomorrow_weather_screen.dart';
 import 'package:weather_app/widgets/geolocation_widget.dart';
 
 class ForecastTabsWidget extends StatefulWidget {
-  const ForecastTabsWidget({
-    Key key,
-    @required this.androidFusedLocation,
-  }) : super(key: key);
-
-  final bool androidFusedLocation;
   @override
   _ForecastTabsWidgetState createState() => _ForecastTabsWidgetState();
 }
@@ -40,24 +34,15 @@ class _ForecastTabsWidgetState extends State<ForecastTabsWidget> {
     });
   }
 
-  void _getCurrentLocation() {
+  Future<void> _getCurrentLocation() async {
     _openLocationSetting();
-    Geolocator()
-      ..forceAndroidLocationManager = !widget.androidFusedLocation
-      ..getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.best,
-      ).then((position) {
-        if (mounted) {
-          setState(() {
-            _currentPosition = position;
-            forecast = _fetchAndSetForecast();
-            _addressTextController.text =
-                'XD'; //TODO ustawic na nazwe lokalizacji
-          });
-        }
-      }).catchError((e) {
-        print(e);
-      });
+    Position position = await Geolocator()
+        .getCurrentPosition(desiredAccuracy: LocationAccuracy.best);
+
+    setState(() {
+      _currentPosition = position;
+      forecast = _fetchAndSetForecast();
+    });
   }
 
   Future<void> _showAlertDialog(String title, String info) async {
@@ -95,6 +80,9 @@ class _ForecastTabsWidgetState extends State<ForecastTabsWidget> {
 
   Future<Forecast> _fetchAndSetForecast() async {
     await _checkInternetConnection();
+    if (_currentPosition == null) {
+      await _getCurrentLocation();
+    }
     final urlBase = 'https://api.openweathermap.org/data/2.5/onecall';
     final apiKey = 'c5eda51f6f9a2bb874fbc57887b1d862';
     final lang = 'pl';
@@ -109,11 +97,6 @@ class _ForecastTabsWidgetState extends State<ForecastTabsWidget> {
 
     if (response.statusCode == 200) {
       return Forecast.fromJson(json.decode(response.body));
-    } else {
-      _showAlertDialog(
-        'Nie udało się pobrać danych',
-        'Niestety nie udało się pobrać danych :( spróbuj ponownie za chwilę.', //TODO sprawdzic kiedy sie uruchomi
-      );
     }
   }
 
@@ -157,13 +140,17 @@ class _ForecastTabsWidgetState extends State<ForecastTabsWidget> {
         .catchError((onError) {
       _showAlertDialog(
         'Nie udało się znaleźć podanego miejsca',
-        onError.toString(), //TODO zrobic porzadek
+        'Spróbuj wpisać więcej informacji np. ulica, kod pocztowy, kraj',
       );
     });
 
     if (placemarks != null && placemarks.isNotEmpty) {
       final Placemark pos = placemarks[0];
-
+      _addressTextController.text = pos.name +
+          ', ' +
+          (pos.postalCode.length > 3 ? pos.postalCode : '') +
+          ' ' +
+          pos.country;
       setState(() {
         _currentPosition = new Position(
           latitude: pos.position.latitude,
@@ -194,13 +181,14 @@ class _ForecastTabsWidgetState extends State<ForecastTabsWidget> {
         ],
       ),
       title: TextField(
+        onSubmitted: (String value) {
+          _findPlace();
+        },
         decoration: InputDecoration(
-          hintText: 'Wpisz nazwę ulicy',
+          hintText: 'Wpisz nazwę ulicy lub kod pocztowy',
           suffixIcon: IconButton(
-            icon: Icon(Icons.search),
-            onPressed: () {
-              _findPlace();
-            },
+            onPressed: () => _addressTextController.clear(),
+            icon: Icon(Icons.clear),
           ),
         ),
         controller: _addressTextController,

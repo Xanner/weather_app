@@ -22,17 +22,17 @@ class ForecastWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     List<Widget> _buildDataView(AsyncSnapshot<Forecast> snapshot) {
       final mediaQuery = MediaQuery.of(context);
-      Current currentWeather = snapshot.data.current;
-      double currentRainAmount = snapshot.data.daily[0].rain;
+      Current currentWeather = snapshot.data?.current;
+      double currentRainAmount = snapshot.data?.daily[0].rain;
       List<Hourly> currentHourlyWeather =
-          snapshot.data.hourly; // od teraz do 6 rano TODO
+          snapshot.data?.hourly; // od teraz do 6 rano TODO
 
-      Daily tomorrowWeather = snapshot.data.daily[1];
-      double tomorrowRainAmount = snapshot.data.daily[1].rain;
+      Daily tomorrowWeather = snapshot.data?.daily[1];
+      double tomorrowRainAmount = snapshot.data?.daily[1].rain;
       List<Hourly> tomorrowHourlyWeather =
-          snapshot.data.hourly; //od 6 rano do 6 rano TODO
+          snapshot.data?.hourly; //od 6 rano do 6 rano TODO
 
-      List<Daily> dailyWeather = snapshot.data.daily;
+      List<Daily> dailyWeather = snapshot.data?.daily;
 
       return <Widget>[
         Container(
@@ -77,11 +77,20 @@ class ForecastWidget extends StatelessWidget {
 
     List<Widget> _buildError() {
       return <Widget>[
-        const Padding(
+        Padding(
           padding: EdgeInsets.only(top: 16),
           child: Center(
-            child: Text(
-              'Coś poszło nie tak, upewnij się, że masz włączony internet.', //TODO wyglada jak ...
+            child: Column(
+              children: <Widget>[
+                Image(
+                  image: AssetImage('assets/whoops.png'),
+                ),
+                Text(
+                  'Coś poszło nie tak, upewnij się, że masz włączony internet i spróbuj ponownie wyszukać miejsce.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 18.0),
+                ),
+              ],
             ),
           ),
         )
@@ -92,14 +101,17 @@ class ForecastWidget extends StatelessWidget {
         future: forecast,
         builder: (context, snapshot) {
           List<Widget> children;
-          if (snapshot.connectionState != ConnectionState.done) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
             children = _buildLoader();
           }
           if (snapshot.hasError) {
             children = _buildError();
           }
-          if (snapshot.hasData) {
-            children = _buildDataView(snapshot);
+          if (snapshot.connectionState == ConnectionState.done) {
+            print(snapshot);
+            children = snapshot.error != null
+                ? _buildError()
+                : _buildDataView(snapshot);
           }
           return Center(
             child: Column(
