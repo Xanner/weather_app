@@ -28,7 +28,7 @@ class StackedAreaLineChart extends StatelessWidget {
     );
   }
 
-  var now = DateTime.now();
+  final now = DateTime.now();
 
   List<charts.Series<LinearTemperature, int>> _createData() {
     final todayData = [
