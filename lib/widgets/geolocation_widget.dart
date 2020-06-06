@@ -46,6 +46,7 @@ class GeolocationWidget extends StatelessWidget {
                         children: <Widget>[
                           Text(
                             'Wybierz lokalizację aby wyświetlić pogodę',
+                            textAlign: TextAlign.center,
                           ),
                         ],
                       )

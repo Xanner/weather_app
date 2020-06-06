@@ -96,6 +96,7 @@ class WeatherInfoWidget extends StatelessWidget {
                                           builder: (context) =>
                                               DetailsWeatherScreen(
                                                 detailsWeather,
+                                                hourlyForecast,
                                               )),
                                     );
                                   },
