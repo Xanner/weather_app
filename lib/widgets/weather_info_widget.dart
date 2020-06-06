@@ -95,9 +95,9 @@ class WeatherInfoWidget extends StatelessWidget {
                                       MaterialPageRoute(
                                           builder: (context) =>
                                               DetailsWeatherScreen(
-                                                detailsWeather,
-                                                hourlyForecast,
-                                              )),
+                                                  detailsWeather,
+                                                  hourlyForecast,
+                                                  dailyRainAmount)),
                                     );
                                   },
                                 )),
