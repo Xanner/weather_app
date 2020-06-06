@@ -30,10 +30,10 @@ class ForecastWidget extends StatelessWidget {
       if (now.hour <= 6) {
         amountHours = 24;
       } else {
-        amountHours = 24 - now.hour + 7; //TODO do zwalidowania
+        amountHours = 24 - now.hour + 7;
       }
 
-      List<Hourly> currentHourlyWeather = snapshot.data.hourly.toList();
+      List<Hourly> currentHourlyWeather = snapshot.data.hourly;
 
       Daily tomorrowWeather = snapshot.data?.daily[1];
       double tomorrowRainAmount = snapshot.data?.daily[1].rain;

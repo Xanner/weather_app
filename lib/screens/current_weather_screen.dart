@@ -20,7 +20,6 @@ class CurrentWeatherScreen extends StatelessWidget {
     final currentWind = currentForecast.windSpeed.round();
     final currentHumidity = currentForecast.humidity;
 
-//tutaj musisz dać nazwe
     return WeatherInfoWidget(
       temperature: currentTemp,
       description: currentDescription,

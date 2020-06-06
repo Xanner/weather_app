@@ -33,6 +33,14 @@ class WeatherInfoWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var now = new DateTime.now();
+    var amountHours = (now.hour - 24).abs() + 7;
+    if (now.hour <= 6) {
+      amountHours = 24;
+    } else {
+      amountHours = 24 - now.hour + 7;
+    }
+
     return Column(
       children: <Widget>[
         Expanded(
@@ -128,7 +136,11 @@ class WeatherInfoWidget extends StatelessWidget {
                           ),
                         ],
                       ),
-                      HourlyForecastList(hourlyForecast, isCurrent),
+                      HourlyForecastList(
+                          isCurrent
+                              ? hourlyForecast.take(amountHours).toList()
+                              : hourlyForecast,
+                          isCurrent),
                     ],
                   ),
                 ),
